@@ -1,0 +1,11 @@
+GET http://localhost:3000/posts
+Content-Type: application/json
+
+POST http://localhost:3000/posts
+Content-Type: application/json
+
+{
+    "id": "1",
+    "name": "Teste Estudos",
+    "text": "Esse post não passa de um teste"
+}
