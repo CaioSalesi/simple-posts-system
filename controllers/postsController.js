@@ -1,51 +1,68 @@
-let posts = [];
+const postService = require('../services/postService');
 
-exports.getAllPosts = (req, res) => {
-    res.json(posts);
-}
-exports.getPostById = (req, res) => {
-    const id = req.params.id;
-    const post = posts.find(p => p.id === id);
+exports.getAllPosts = async (req, res) => {
+    try {
+        const posts = await postService.getAll();
+        res.json(posts);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar posts', error: error.message });
+    }
+};
 
-    if (!post)
-        return res.status(404).json("Post não encontrado");
+exports.getPostById = async (req, res) => {
+    try {
+        const post = await postService.getById(req.params.id);
+        if (!post) return res.status(404).json({ message: "Post não encontrado" });
+        res.json(post);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar post', error: error.message });
+    }
+};
 
-    res.json(post);
-}
-exports.createPost = (req, res) => {
-    const { id, name, text } = req.body;
+exports.createPost = async (req, res) => {
+    try {
+        const { title, content, author } = req.body;
+        if (!title || !content || !author) {
+            return res.status(400).json({ message: "Campos obrigatórios: title, content, author" });
+        }
 
-    if (posts.some(p => p.id === id))
-        return res.status(400).json("ID deve ser única");
-    if (typeof id !== "string" || typeof name !== "string" || typeof text !== "string")
-        return res.status(400).json("Os todos os dados devem ser passados como String");
-    
-    const post = { id, name, text };
-    posts.push(post)
+        const post = await postService.create({ title, content, author });
+        res.status(201).json(post);
+    } catch (error) {
+        const status = error.name === 'SequelizeValidationError' ? 400 : 500;
+        res.status(status).json({ message: 'Erro ao criar post', error: error.message });
+    }
+};
 
-    res.status(201).json(post);
-}
-exports.updatePostById = (req, res) => {
-    const id = req.params.id;
-    const { name, text } = req.body;
-    const post = posts.find(p => p.id === id);
+exports.updatePostById = async (req, res) => {
+    try {
+        const updatedPost = await postService.update(req.params.id, req.body);
+        if (!updatedPost) return res.status(404).json({ message: "Post não encontrado" });
+        res.json(updatedPost);
+    } catch (error) {
+        const status = error.name === 'SequelizeValidationError' ? 400 : 500;
+        res.status(status).json({ message: 'Erro ao atualizar post', error: error.message });
+    }
+};
 
-    if (typeof name !== "string" || typeof text !== "string")
-        return res.status(400).json("Os todos os dados devem ser passados como String");
-    if (!post)
-        return res.status(404).json("Post não encontrado");
+exports.deletePostById = async (req, res) => {
+    try {
+        const deleted = await postService.delete(req.params.id);
+        if (!deleted) return res.status(404).json({ message: "Post não encontrado" });
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao deletar post', error: error.message });
+    }
+};
 
-    post.name = name;
-    post.text = text;
-    res.json(post);
-}
-exports.deletePostById = (req, res) => {
-    const id = req.params.id;
-    const index = posts.findIndex(p => p.id === id);
+exports.searchPosts = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ message: "Parâmetro 'q' é obrigatório." });
 
-    if (index === -1)
-        return res.status(404).send("Post não encontrado")
-
-    posts.splice(index, 1);
-    res.status(204).send();
-}
+        const posts = await postService.search(q);
+        res.json({ query: q, count: posts.length, results: posts });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro ao buscar posts', error: error.message });
+    }
+};
