@@ -1,10 +1,21 @@
 const postService = require('../services/postService');
 const Post = require('../models/Post');
+const sequelize = require('../config/database');
 
 // Simula o modelo Post do Sequelize
 jest.mock('../models/Post');
 
 describe('PostService', () => {
+    // Limpa o histórico de chamadas dos mocks antes de cada teste
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    // Fecha a conexão com o banco após todos os testes para o Jest encerrar corretamente
+    afterAll(async () => {
+        await sequelize.close();
+    });
+
     it('deve retornar uma lista de posts', async () => {
         const mockPosts = [
             { id: '1', title: 'Post Teste', content: 'Conteúdo', author: 'Autor' }

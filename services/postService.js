@@ -2,7 +2,7 @@ const Post = require('../models/Post');
 const { Op } = require('sequelize');
 
 class PostService {
-    async listAll() {
+    async getAll() {
         return await Post.findAll({ order: [['createdAt', 'DESC']] });
     }
 

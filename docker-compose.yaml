@@ -18,6 +18,13 @@ services:
     command: npm start
     depends_on:
       - db
+    networks:
+      - app-network
+    environment:
+      - DB_HOST=db
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASS=${POSTGRES_PASSWORD}
+      - DB_NAME=${POSTGRES_DB}
 
 networks:
   app-network:
