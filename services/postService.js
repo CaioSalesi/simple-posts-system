@@ -10,6 +10,11 @@ class PostService {
         return await Post.findByPk(id);
     }
 
+    // alias mantido para compatibilidade com o controller
+    async getById(id) {
+        return this.findById(id);
+    }
+
     async create(data) {
         return await Post.create(data);
     }

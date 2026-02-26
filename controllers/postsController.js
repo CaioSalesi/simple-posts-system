@@ -10,11 +10,15 @@ exports.getAllPosts = async (req, res) => {
 };
 
 exports.getPostById = async (req, res) => {
+    const { id } = req.params;
+    console.log(`[getPostById] id recebido: "${id}"`);
     try {
-        const post = await postService.getById(req.params.id);
+        const post = await postService.findById(id);
+        console.log(`[getPostById] resultado:`, post ? `encontrado` : 'null');
         if (!post) return res.status(404).json({ message: "Post não encontrado" });
         res.json(post);
     } catch (error) {
+        console.error(`[getPostById] ERRO:`, error.message);
         res.status(500).json({ message: 'Erro ao buscar post', error: error.message });
     }
 };
@@ -35,11 +39,15 @@ exports.createPost = async (req, res) => {
 };
 
 exports.updatePostById = async (req, res) => {
+    const { id } = req.params;
+    console.log(`[updatePostById] id recebido: "${id}", body:`, req.body);
     try {
-        const updatedPost = await postService.update(req.params.id, req.body);
+        const updatedPost = await postService.update(id, req.body);
+        console.log(`[updatePostById] resultado:`, updatedPost ? 'atualizado' : 'null');
         if (!updatedPost) return res.status(404).json({ message: "Post não encontrado" });
         res.json(updatedPost);
     } catch (error) {
+        console.error(`[updatePostById] ERRO:`, error.message);
         const status = error.name === 'SequelizeValidationError' ? 400 : 500;
         res.status(status).json({ message: 'Erro ao atualizar post', error: error.message });
     }

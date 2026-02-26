@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1768531039105" clover="3.2.0">
-  <project timestamp="1768531039105" name="All files">
-    <metrics statements="63" coveredstatements="33" conditionals="25" coveredconditionals="9" methods="12" coveredmethods="5" elements="100" coveredelements="47" complexity="0" loc="63" ncloc="63" packages="4" files="4" classes="4"/>
+<coverage generated="1772067779441" clover="3.2.0">
+  <project timestamp="1772067779441" name="All files">
+    <metrics statements="72" coveredstatements="36" conditionals="29" coveredconditionals="10" methods="13" coveredmethods="5" elements="114" coveredelements="51" complexity="0" loc="72" ncloc="72" packages="4" files="4" classes="4"/>
     <package name="config">
       <metrics statements="4" coveredstatements="4" conditionals="4" coveredconditionals="2" methods="0" coveredmethods="0"/>
       <file name="database.js" path="C:\Users\user\Documents\GitHub\simple-posts-system\config\database.js">
@@ -13,9 +13,9 @@
       </file>
     </package>
     <package name="controllers">
-      <metrics statements="41" coveredstatements="20" conditionals="17" coveredconditionals="7" methods="6" coveredmethods="3"/>
+      <metrics statements="49" coveredstatements="23" conditionals="21" coveredconditionals="8" methods="6" coveredmethods="3"/>
       <file name="postsController.js" path="C:\Users\user\Documents\GitHub\simple-posts-system\controllers\postsController.js">
-        <metrics statements="41" coveredstatements="20" conditionals="17" coveredconditionals="7" methods="6" coveredmethods="3"/>
+        <metrics statements="49" coveredstatements="23" conditionals="21" coveredconditionals="8" methods="6" coveredmethods="3"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
@@ -25,38 +25,46 @@
         <line num="12" count="1" type="stmt"/>
         <line num="13" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
-        <line num="15" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="15" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="22" count="1" type="stmt"/>
-        <line num="23" count="1" type="stmt"/>
-        <line num="24" count="1" type="stmt"/>
-        <line num="25" count="1" type="cond" truecount="4" falsecount="1"/>
-        <line num="26" count="0" type="stmt"/>
-        <line num="29" count="1" type="stmt"/>
-        <line num="30" count="1" type="stmt"/>
-        <line num="32" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="33" count="0" type="stmt"/>
-        <line num="37" count="1" type="stmt"/>
-        <line num="38" count="1" type="stmt"/>
-        <line num="39" count="1" type="stmt"/>
-        <line num="40" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="18" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="1" type="cond" truecount="4" falsecount="1"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="37" count="0" type="stmt"/>
         <line num="41" count="1" type="stmt"/>
-        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="44" count="0" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="45" count="1" type="stmt"/>
+        <line num="46" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="47" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="48" count="1" type="stmt"/>
-        <line num="49" count="2" type="stmt"/>
-        <line num="50" count="2" type="stmt"/>
-        <line num="51" count="2" type="cond" truecount="2" falsecount="0"/>
-        <line num="52" count="1" type="stmt"/>
-        <line num="54" count="0" type="stmt"/>
-        <line num="58" count="1" type="stmt"/>
-        <line num="59" count="0" type="stmt"/>
-        <line num="60" count="0" type="stmt"/>
-        <line num="61" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="63" count="0" type="stmt"/>
-        <line num="64" count="0" type="stmt"/>
-        <line num="66" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="58" count="2" type="stmt"/>
+        <line num="59" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
       </file>
     </package>
     <package name="models">
@@ -70,23 +78,24 @@
       </file>
     </package>
     <package name="services">
-      <metrics statements="14" coveredstatements="5" conditionals="4" coveredconditionals="0" methods="6" coveredmethods="2"/>
+      <metrics statements="15" coveredstatements="5" conditionals="4" coveredconditionals="0" methods="7" coveredmethods="2"/>
       <file name="postService.js" path="C:\Users\user\Documents\GitHub\simple-posts-system\services\postService.js">
-        <metrics statements="14" coveredstatements="5" conditionals="4" coveredconditionals="0" methods="6" coveredmethods="2"/>
+        <metrics statements="15" coveredstatements="5" conditionals="4" coveredconditionals="0" methods="7" coveredmethods="2"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="6" count="1" type="stmt"/>
         <line num="10" count="0" type="stmt"/>
-        <line num="14" count="1" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
-        <line num="19" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="20" count="0" type="stmt"/>
-        <line num="24" count="0" type="stmt"/>
-        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="26" count="0" type="stmt"/>
-        <line num="30" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="31" count="0" type="stmt"/>
-        <line num="44" count="2" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="49" count="2" type="stmt"/>
       </file>
     </package>
   </project>

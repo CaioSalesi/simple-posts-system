@@ -1,4 +1,4 @@
-require('dotenv').config();
+﻿require('dotenv').config();
 const express = require('express');
 const app = express();
 const postsRoutes = require('./routes/posts');
@@ -11,7 +11,7 @@ app.use('/posts', postsRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ 
+    res.status(500).json({
         message: 'Erro interno do servidor',
         error: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
@@ -19,24 +19,26 @@ app.use((err, req, res, next) => {
 
 const startServer = async () => {
     try {
-        // Testa a conexão com o banco
+        // Testa a conexÃ£o com o banco
         await sequelize.authenticate();
-        console.log('✅ Conectado ao PostgreSQL');
-        
+        console.log('âœ… Conectado ao PostgreSQL');
+
         // Sincroniza os models (cria/atualiza tabelas)
         await sequelize.sync({ alter: true });
-        console.log('✅ Tabelas sincronizadas');
-        
+        console.log('âœ… Tabelas sincronizadas');
+
         // Inicia o servidor
         app.listen(PORT, () => {
-            console.log(`🚀 Servidor rodando na porta ${PORT}`);
+            console.log(`ðŸš€ Servidor rodando na porta ${PORT}`);
         });
     } catch (error) {
-        console.error('❌ Erro ao iniciar servidor:', error);
+        console.error('âŒ Erro ao iniciar servidor:', error);
         process.exit(1);
     }
 };
 
-startServer();
+if (require.main === module) {
+    startServer();
+}
 
 module.exports = app;
