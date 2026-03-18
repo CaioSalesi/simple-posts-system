@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { useAuth } from '../context/AuthContext'
+import { useState } from 'react'
 
 export default function Navbar() {
   const { user, logout, isTeacher, isStudent } = useAuth()
@@ -11,6 +12,8 @@ export default function Navbar() {
     navigate('/')
   }
 
+  const [menuOpen, setMenuOpen] = useState(false)
+
   return (
     <Nav>
       <Inner>
@@ -19,7 +22,7 @@ export default function Navbar() {
           <LogoText>ClassHub</LogoText>
         </Logo>
 
-        <Links>
+        <Links open={menuOpen}>
           <NavLink to="/">Posts</NavLink>
           {isTeacher && (
             <>
@@ -28,7 +31,9 @@ export default function Navbar() {
             </>
           )}
         </Links>
-
+        <MenuButton onClick={() => setMenuOpen(!menuOpen)}>
+          ☰
+        </MenuButton>
         <UserArea>
           {user ? (
             <>
@@ -106,7 +111,28 @@ const Links = styled.div`
   flex: 1;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    display: none;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    background: ${({ theme }) => theme.colors.bgCard};
+    padding: ${({ theme }) => theme.spacing.md};
+
+    display: ${({ open }) => (open ? 'flex' : 'none')};
+  }
+`
+
+const MenuButton = styled.button`
+  display: none;
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: ${({ theme }) => theme.colors.textPrimary};
+  cursor: pointer;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    display: block;
   }
 `
 
