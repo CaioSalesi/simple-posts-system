@@ -20,7 +20,9 @@ jobs:
           cache: 'npm'
 
       - name: Instalar dependências
+        working-directory: ./frontend
         run: npm install
 
       - name: Rodar build (Vite)
+        working-directory: ./frontend
         run: npm run build
