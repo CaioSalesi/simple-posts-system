@@ -14,39 +14,43 @@ export default function Navbar() {
 
   const [menuOpen, setMenuOpen] = useState(false)
 
+  const closeMenu = () => setMenuOpen(false)
+
   return (
     <Nav>
       <Inner>
-        <Logo to="/">
+        <Logo to="/" onClick={closeMenu}>
           <LogoIcon>📚</LogoIcon>
           <LogoText>ClassHub</LogoText>
         </Logo>
 
+        <MenuButton onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+          {menuOpen ? '✕' : '☰'}
+        </MenuButton>
+
         <Links open={menuOpen}>
-          <NavLink to="/">Posts</NavLink>
+          <NavLink to="/" onClick={closeMenu}>Posts</NavLink>
           {isTeacher && (
             <>
-              <NavLink to="/admin">Painel</NavLink>
-              <NavLink to="/admin/posts/new">Criar Post</NavLink>
+              <NavLink to="/admin" onClick={closeMenu}>Painel</NavLink>
+              <NavLink to="/admin/posts/new" onClick={closeMenu}>Criar Post</NavLink>
             </>
           )}
         </Links>
-        <MenuButton onClick={() => setMenuOpen(!menuOpen)}>
-          ☰
-        </MenuButton>
+
         <UserArea>
           {user ? (
             <>
               {isTeacher && (
                 <UserBadge role="teacher">
-                  👨‍🏫 Professor
-                  <span>{user.name}</span>
+                  👨‍🏫 <span className="role">Professor</span>
+                  <span className="name">{user.name}</span>
                 </UserBadge>
               )}
               {isStudent && (
                 <UserBadge role="student">
-                  🎓 Aluno
-                  <span>{user.name}</span>
+                  🎓 <span className="role">Aluno</span>
+                  <span className="name">{user.name}</span>
                 </UserBadge>
               )}
               <LogoutBtn onClick={handleLogout}>Sair</LogoutBtn>
@@ -82,6 +86,10 @@ const Inner = styled.div`
     padding: 0 ${({ theme }) => theme.spacing.md};
     gap: ${({ theme }) => theme.spacing.md};
   }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    gap: ${({ theme }) => theme.spacing.sm};
+  }
 `
 
 const Logo = styled(Link)`
@@ -111,15 +119,17 @@ const Links = styled.div`
   flex: 1;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    display: ${({ open }) => (open ? 'flex' : 'none')};
     position: absolute;
     top: 64px;
     left: 0;
-    width: 100%;
+    right: 0;
     flex-direction: column;
     background: ${({ theme }) => theme.colors.bgCard};
-    padding: ${({ theme }) => theme.spacing.md};
-
-    display: ${({ open }) => (open ? 'flex' : 'none')};
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    padding: ${({ theme }) => theme.spacing.sm} 0;
+    z-index: 50;
   }
 `
 
@@ -130,9 +140,13 @@ const MenuButton = styled.button`
   border: none;
   color: ${({ theme }) => theme.colors.textPrimary};
   cursor: pointer;
+  padding: 4px 8px;
+  flex-shrink: 0;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `
 
@@ -147,6 +161,13 @@ const NavLink = styled(Link)`
   &:hover {
     background: ${({ theme }) => theme.colors.surface};
     color: ${({ theme }) => theme.colors.textPrimary};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    width: 100%;
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 0;
   }
 `
 
@@ -167,14 +188,21 @@ const UserBadge = styled.div`
   background: ${({ theme }) => theme.colors.bgCard};
   border-radius: ${({ theme }) => theme.radii.full};
   border: 1px solid ${({ theme, role }) => role === 'teacher' ? theme.colors.primary + '50' : theme.colors.accent + '50'};
+  white-space: nowrap;
 
-  span {
+  .name {
     font-weight: 600;
     color: ${({ theme }) => theme.colors.textPrimary};
+  }
 
-    @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-      display: none;
-    }
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    .name { display: none; }
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    .role { display: none; }
+    padding: 6px 8px;
+    font-size: 16px;
   }
 `
 
