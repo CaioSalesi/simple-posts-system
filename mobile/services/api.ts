@@ -2,7 +2,7 @@
 //   iOS simulator    → http://localhost:3000
 //   Android emulator → http://10.0.2.2:3000
 //   Physical device  → http://<your-machine-ip>:3000
-const API_BASE_URL = 'http://192.168.0.58:3000'
+const API_BASE_URL = 'http://IPV4_ADDRESS:3000'
 
 let authToken: string | null = null
 export const setAuthToken = (token: string | null) => { authToken = token }
