@@ -27,6 +27,34 @@ export default function RootLayout() {
             name="admin/[id]/edit"
             options={{ title: 'Editar Post', headerBackTitle: 'Voltar' }}
           />
+          <Stack.Screen
+            name="admin/posts"
+            options={{ title: 'Posts', headerBackTitle: 'Voltar' }}
+          />
+          <Stack.Screen
+            name="admin/teachers/index"
+            options={{ title: 'Professores', headerBackTitle: 'Voltar' }}
+          />
+          <Stack.Screen
+            name="admin/teachers/new"
+            options={{ title: 'Novo Professor', headerBackTitle: 'Voltar' }}
+          />
+          <Stack.Screen
+            name="admin/teachers/[id]/edit"
+            options={{ title: 'Editar Professor', headerBackTitle: 'Voltar' }}
+          />
+          <Stack.Screen
+            name="admin/students/index"
+            options={{ title: 'Alunos', headerBackTitle: 'Voltar' }}
+          />
+          <Stack.Screen
+            name="admin/students/new"
+            options={{ title: 'Novo Aluno', headerBackTitle: 'Voltar' }}
+          />
+          <Stack.Screen
+            name="admin/students/[id]/edit"
+            options={{ title: 'Editar Aluno', headerBackTitle: 'Voltar' }}
+          />
         </Stack>
         <StatusBar style="light" />
       </ThemeProvider>

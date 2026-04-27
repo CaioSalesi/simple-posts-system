@@ -3,13 +3,22 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const postsRoutes = require('./routes/posts');
+const authRoutes = require('./routes/auth');
+const teachersRoutes = require('./routes/teachers');
+const studentsRoutes = require('./routes/students');
 const sequelize = require('./config/database');
+// Ensure models are loaded so Sequelize syncs all tables
+require('./models/Teacher');
+require('./models/Student');
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use('/posts', postsRoutes);
+app.use('/auth', authRoutes);
+app.use('/teachers', teachersRoutes);
+app.use('/students', studentsRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

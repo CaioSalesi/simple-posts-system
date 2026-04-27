@@ -3,6 +3,7 @@ import { C } from '@/constants/app-theme'
 import { Redirect, useRouter } from 'expo-router'
 import { useState } from 'react'
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -37,21 +38,29 @@ export default function LoginScreen() {
   const router = useRouter()
 
   const [selectedRole, setSelectedRole] = useState<Role | null>(null)
-  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   if (user) return <Redirect href="/(tabs)" />
 
   const activeRole = ROLES.find(r => r.id === selectedRole)
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedRole) return
-    const ok = login(name, password, selectedRole)
-    if (ok) {
-      router.replace('/(tabs)')
+    if (!email.trim() || !password.trim()) {
+      setError('E-mail e senha são obrigatórios.')
+      return
+    }
+    setLoading(true)
+    setError('')
+    const err = await login(email.trim(), password, selectedRole)
+    setLoading(false)
+    if (err) {
+      setError(err)
     } else {
-      setError('Nome e senha são obrigatórios.')
+      router.replace('/(tabs)')
     }
   }
 
@@ -60,10 +69,7 @@ export default function LoginScreen() {
       style={styles.root}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         {/* Logo */}
         <View style={styles.logoArea}>
           <Text style={styles.logoEmoji}>📚</Text>
@@ -94,27 +100,34 @@ export default function LoginScreen() {
           </>
         ) : (
           <>
-            <Pressable style={styles.backBtn} onPress={() => { setSelectedRole(null); setError('') }}>
+            <Pressable
+              style={styles.backBtn}
+              onPress={() => { setSelectedRole(null); setError('') }}
+            >
               <Text style={styles.backBtnText}>← Voltar</Text>
             </Pressable>
 
-            <View style={[styles.roleHeader, { borderColor: activeRole!.color + '50', backgroundColor: activeRole!.color + '18' }]}>
+            <View style={[styles.roleHeader, {
+              borderColor: activeRole!.color + '50',
+              backgroundColor: activeRole!.color + '18',
+            }]}>
               <Text style={styles.roleHeaderIcon}>{activeRole!.icon}</Text>
-              <View>
+              <View style={{ flex: 1 }}>
                 <Text style={styles.roleHeaderTitle}>Entrar como {activeRole!.label}</Text>
                 <Text style={styles.roleHeaderDesc}>{activeRole!.description}</Text>
               </View>
             </View>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Nome</Text>
+              <Text style={styles.label}>E-mail</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Seu nome completo"
+                placeholder="seu@email.com"
                 placeholderTextColor={C.textMuted}
-                value={name}
-                onChangeText={t => { setName(t); setError('') }}
-                autoCapitalize="words"
+                value={email}
+                onChangeText={t => { setEmail(t); setError('') }}
+                keyboardType="email-address"
+                autoCapitalize="none"
                 autoCorrect={false}
               />
             </View>
@@ -140,19 +153,16 @@ export default function LoginScreen() {
             <Pressable
               style={({ pressed }) => [
                 styles.submitBtn,
-                { backgroundColor: activeRole!.color, opacity: pressed ? 0.8 : 1 },
+                { backgroundColor: activeRole!.color, opacity: pressed || loading ? 0.7 : 1 },
               ]}
               onPress={handleSubmit}
+              disabled={loading}
             >
-              <Text style={styles.submitBtnText}>Entrar como {activeRole!.label}</Text>
+              {loading
+                ? <ActivityIndicator color="#fff" />
+                : <Text style={styles.submitBtnText}>Entrar como {activeRole!.label}</Text>
+              }
             </Pressable>
-
-            <View style={styles.demoNotice}>
-              <Text style={styles.demoText}>
-                <Text style={{ color: C.warning, fontWeight: '700' }}>💡 Modo demonstração:</Text>
-                {' '}qualquer nome e senha são aceitos.
-              </Text>
-            </View>
           </>
         )}
       </ScrollView>
@@ -161,152 +171,43 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: C.bg,
-  },
-  scroll: {
-    flexGrow: 1,
-    padding: 24,
-    paddingTop: 64,
-    gap: 20,
-  },
-  logoArea: {
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  logoEmoji: {
-    fontSize: 48,
-    marginBottom: 8,
-  },
-  appName: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: C.primaryLight,
-    marginBottom: 4,
-  },
-  tagline: {
-    fontSize: 13,
-    color: C.textMuted,
-  },
-  chooseTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    textAlign: 'center',
-    color: C.textSecondary,
-  },
-  roleGrid: {
-    flexDirection: 'row',
-    gap: 12,
-  },
+  root: { flex: 1, backgroundColor: C.bg },
+  scroll: { flexGrow: 1, padding: 24, paddingTop: 64, gap: 20 },
+  logoArea: { alignItems: 'center', marginBottom: 8 },
+  logoEmoji: { fontSize: 48, marginBottom: 8 },
+  appName: { fontSize: 28, fontWeight: '800', color: C.primaryLight, marginBottom: 4 },
+  tagline: { fontSize: 13, color: C.textMuted },
+  chooseTitle: { fontSize: 15, fontWeight: '600', textAlign: 'center', color: C.textSecondary },
+  roleGrid: { flexDirection: 'row', gap: 12 },
   roleCard: {
-    flex: 1,
-    backgroundColor: C.bgCard,
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: 20,
-    alignItems: 'center',
-    gap: 8,
+    flex: 1, backgroundColor: C.bgCard, borderWidth: 1, borderRadius: 16,
+    padding: 20, alignItems: 'center', gap: 8,
   },
-  roleIcon: {
-    fontSize: 36,
-  },
-  roleLabel: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: C.textPrimary,
-  },
-  roleDesc: {
-    fontSize: 11,
-    color: C.textMuted,
-    textAlign: 'center',
-    lineHeight: 16,
-  },
-  roleArrow: {
-    fontSize: 18,
-    marginTop: 4,
-  },
-  backBtn: {
-    alignSelf: 'flex-start',
-  },
-  backBtnText: {
-    fontSize: 13,
-    color: C.textMuted,
-    fontWeight: '500',
-  },
+  roleIcon: { fontSize: 36 },
+  roleLabel: { fontSize: 15, fontWeight: '700', color: C.textPrimary },
+  roleDesc: { fontSize: 11, color: C.textMuted, textAlign: 'center', lineHeight: 16 },
+  roleArrow: { fontSize: 18, marginTop: 4 },
+  backBtn: { alignSelf: 'flex-start' },
+  backBtnText: { fontSize: 13, color: C.textMuted, fontWeight: '500' },
   roleHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderRadius: 12,
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    padding: 16, borderWidth: 1, borderRadius: 12,
   },
-  roleHeaderIcon: {
-    fontSize: 32,
-  },
-  roleHeaderTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: C.textPrimary,
-    marginBottom: 2,
-  },
-  roleHeaderDesc: {
-    fontSize: 12,
-    color: C.textMuted,
-    flexShrink: 1,
-  },
-  field: {
-    gap: 6,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: C.textSecondary,
-  },
+  roleHeaderIcon: { fontSize: 32 },
+  roleHeaderTitle: { fontSize: 16, fontWeight: '700', color: C.textPrimary, marginBottom: 2 },
+  roleHeaderDesc: { fontSize: 12, color: C.textMuted },
+  field: { gap: 6 },
+  label: { fontSize: 13, fontWeight: '600', color: C.textSecondary },
   input: {
-    backgroundColor: C.bgCard,
-    borderWidth: 1,
-    borderColor: C.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 15,
-    color: C.textPrimary,
+    backgroundColor: C.bgCard, borderWidth: 1, borderColor: C.border,
+    borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12,
+    fontSize: 15, color: C.textPrimary,
   },
   errorBox: {
-    backgroundColor: C.danger + '20',
-    borderWidth: 1,
-    borderColor: C.danger + '50',
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: C.danger + '20', borderWidth: 1,
+    borderColor: C.danger + '50', borderRadius: 8, padding: 12,
   },
-  errorText: {
-    color: C.danger,
-    fontSize: 13,
-  },
-  submitBtn: {
-    borderRadius: 12,
-    padding: 14,
-    alignItems: 'center',
-  },
-  submitBtnText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  demoNotice: {
-    backgroundColor: C.warning + '10',
-    borderWidth: 1,
-    borderColor: C.warning + '30',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 24,
-  },
-  demoText: {
-    fontSize: 12,
-    color: C.textMuted,
-    textAlign: 'center',
-    lineHeight: 18,
-  },
+  errorText: { color: C.danger, fontSize: 13 },
+  submitBtn: { borderRadius: 12, padding: 14, alignItems: 'center' },
+  submitBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 })
