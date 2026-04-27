@@ -102,7 +102,25 @@ npm install
 npm run dev
 ```
 
-### 4. Acessando a aplicação
+### 4. Criar o professor administrador
+
+Após o container subir, execute o seed para criar o usuário admin:
+
+```bash
+docker-compose exec app node seed-admin.js
+```
+
+Credenciais criadas:
+
+| Campo | Valor |
+|-------|-------|
+| E-mail | `admin@email.com` |
+| Senha | `Pass@123` |
+| Role | Professor |
+
+> Use essas credenciais para fazer o primeiro login no app mobile ou no frontend.
+
+### 5. Acessando a aplicação
 
 
 | Serviço       | URL                                            |
