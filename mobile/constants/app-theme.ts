@@ -1,0 +1,15 @@
+export const C = {
+  primary: '#4F46E5',
+  primaryLight: '#818CF8',
+  accent: '#06B6D4',
+  danger: '#EF4444',
+  warning: '#F59E0B',
+  success: '#10B981',
+  bg: '#0F172A',
+  bgCard: '#1E293B',
+  surface: '#334155',
+  border: '#475569',
+  textPrimary: '#F1F5F9',
+  textSecondary: '#94A3B8',
+  textMuted: '#64748B',
+} as const

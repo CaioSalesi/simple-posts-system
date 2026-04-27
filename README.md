@@ -10,6 +10,7 @@ Plataforma de blogging educacional onde **professores** publicam, editam e geren
 - [Como Executar](#como-executar)
 - [Backend](#backend)
 - [Frontend](#frontend)
+- [Mobile](#mobile)
 - [Testes](#testes)
 - [Tecnologias](#tecnologias)
 
@@ -18,18 +19,25 @@ Plataforma de blogging educacional onde **professores** publicam, editam e geren
 ## Arquitetura Geral
 
 ```
+┌──────────────┐
+│    Mobile    │
+│ Expo/React   │
+│ Native (Go)  │
+└──────┬───────┘
+       │ REST
 ┌──────────────┐       ┌──────────────┐       ┌──────────────┐
-│   Frontend   │──────▶│   Backend    │──────▶│  PostgreSQL   │
-│  React/Vite  │ REST  │ Express/Node │  SQL  │   (Docker)    │
-│  porta 5173  │◀──────│  porta 3000  │◀──────│  porta 5432   │
+│   Frontend   │──────▶│   Backend    │──────▶│  PostgreSQL  │
+│  React/Vite  │ REST  │ Express/Node │  SQL  │   (local)    │
+│  porta 5173  │◀──────│  porta 3000  │◀──────│  porta 5432  │
 └──────────────┘       └──────────────┘       └──────────────┘
 ```
 
 O sistema segue uma arquitetura de três camadas:
 
-- **Frontend** — SPA em React servida pelo Vite, consome a API REST do backend.
+- **Frontend Web** — SPA em React servida pelo Vite, consome a API REST do backend.
+- **Frontend Mobile** — App em React Native com Expo, consome a mesma API REST.
 - **Backend** — API REST em Node.js/Express com Sequelize como ORM.
-- **Banco de dados** — PostgreSQL, executado via Docker.
+- **Banco de dados** — PostgreSQL 18 local, acessado via `host.docker.internal`.
 
 ---
 
@@ -248,6 +256,113 @@ O projeto usa **Styled Components** com um tema centralizado (`theme.js`) que de
 
 ---
 
+## Mobile
+
+App em React Native com Expo Router que consome a mesma API do backend, com suporte a perfis de **Aluno** e **Professor**.
+
+### Pré-requisitos
+
+- [Node.js](https://nodejs.org/) v20+
+- [Expo Go](https://expo.dev/go) instalado no celular (Android ou iOS)
+- Celular e computador na **mesma rede Wi-Fi**
+
+### 1. Instalar dependências
+
+```bash
+cd mobile
+npm install
+```
+
+### 2. Configurar a URL da API
+
+Abra `mobile/services/api.ts` e substitua o IP pelo IP local da sua máquina:
+
+```ts
+const API_BASE_URL = 'http://SEU_IP_LOCAL:3000'
+```
+
+Para descobrir seu IP no Windows:
+
+```powershell
+ipconfig
+# Procure por "Endereço IPv4" na seção Wi-Fi
+```
+
+> **Atenção:** o celular precisa conseguir alcançar essa URL. Verifique se o Firewall do Windows permite conexões na porta 3000:
+> ```powershell
+> # Execute como Administrador
+> New-NetFirewallRule -DisplayName "Allow port 3000" -Direction Inbound -Protocol TCP -LocalPort 3000 -Action Allow
+> ```
+
+### 3. Iniciar o app
+
+Com o backend rodando (`docker-compose up -d app`), inicie o servidor Expo:
+
+```bash
+cd mobile
+npx expo start
+```
+
+Aponte a câmera do celular para o QR Code exibido no terminal e o app abrirá no **Expo Go**.
+
+### Estrutura de diretórios
+
+```
+mobile/
+├── app/
+│   ├── _layout.tsx          # Layout raiz com AuthProvider e navegação
+│   ├── login.tsx            # Tela de login e seleção de perfil
+│   ├── (tabs)/
+│   │   ├── _layout.tsx      # Navegação por abas
+│   │   ├── index.tsx        # Lista de posts com busca
+│   │   └── explore.tsx      # Painel administrativo (professores)
+│   ├── post/
+│   │   └── [id].tsx         # Leitura completa do post
+│   └── admin/
+│       ├── new.tsx          # Criação de post
+│       └── [id]/
+│           └── edit.tsx     # Edição de post
+├── context/
+│   └── AuthContext.tsx      # Estado global de autenticação
+├── services/
+│   └── api.ts               # Cliente HTTP (fetch) para a API REST
+└── constants/
+    └── app-theme.ts         # Tokens de cor do ClassHub
+```
+
+### Telas
+
+| Tela | Acesso | Descrição |
+|------|--------|-----------|
+| Login | Público | Seleção de perfil (Aluno/Professor) e formulário de acesso |
+| Posts (aba) | Todos | Lista de posts com busca por palavra-chave e pull-to-refresh |
+| Detalhe do post | Todos | Conteúdo completo, data, autor |
+| Admin (aba) | Professor | Tabela de posts com ações de editar e excluir |
+| Criar post | Professor | Formulário com título, autor e conteúdo |
+| Editar post | Professor | Formulário pré-preenchido com dados do post |
+
+### Autenticação
+
+O app opera em **modo demonstração** — qualquer nome e senha não-vazios são aceitos. O perfil escolhido define o nível de acesso:
+
+- **Aluno** — visualiza e busca posts.
+- **Professor** — acesso completo: criar, editar, excluir e acessar o painel admin.
+
+> A sessão é mantida em memória e encerrada ao fechar o app.
+
+### Guia de uso
+
+1. **Abra o Expo Go** e escaneie o QR Code do terminal.
+2. **Escolha o perfil** (Aluno ou Professor) na tela de login.
+3. **Entre com qualquer nome e senha** — o modo demonstração aceita qualquer valor.
+4. **Aba Posts** — veja todos os posts, use a barra de busca para filtrar. Professores têm botões de editar/excluir em cada card e um botão flutuante para criar novo post.
+5. **Toque em um card** para ler o post completo.
+6. **Aba Admin** (Professor) — visão em lista de todos os posts com ações rápidas.
+7. **Criar post** — toque em "+ Novo Post" e preencha título, autor e conteúdo.
+8. **Sair** — toque em "Sair" no canto superior direito da aba Posts.
+
+---
+
 ## Testes
 
 O backend possui testes unitários com **Jest**, cobrindo os controllers e services com mocks das camadas adjacentes.
@@ -273,7 +388,10 @@ Os testes geram relatório de cobertura automaticamente (`jest --coverage`).
 | **Backend**  | Node.js                 | 20+    |
 |              | Express                 | 5.1    |
 |              | Sequelize               | 6.37   |
-|              | PostgreSQL (via Docker) | 17     |
+|              | PostgreSQL              | 18     |
+| **Mobile**   | React Native            | 0.83   |
+|              | Expo                    | 55     |
+|              | Expo Router             | 55     |
 | **Testes**   | Jest                    | 29.7   |
 | **Infra**    | Docker / Docker Compose | —      |
 
