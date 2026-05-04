@@ -16,15 +16,14 @@ services:
     ports:
       - "${EXPOSED_PORT_APP}:3000"
     command: npm start
-    depends_on:
-      - db
-    networks:
-      - app-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
-      - DB_HOST=db
-      - DB_USER=${POSTGRES_USER}
-      - DB_PASS=${POSTGRES_PASSWORD}
-      - DB_NAME=${POSTGRES_DB}
+      - DB_HOST=host.docker.internal
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - EXPOSED_PORT_DB=${EXPOSED_PORT_DB}
 
 networks:
   app-network:
