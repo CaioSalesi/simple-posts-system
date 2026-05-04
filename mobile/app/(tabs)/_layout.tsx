@@ -37,7 +37,7 @@ export default function TabLayout() {
         options={{
           title: isTeacher ? 'Admin' : 'Painel',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={26} name="gearshape.fill" color={color} />
+            <IconSymbol size={26} name="gear.fill" color={color} />
           ),
         }}
       />

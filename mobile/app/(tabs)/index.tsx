@@ -1,8 +1,9 @@
-import { useAuth } from '@/context/AuthContext'
 import { C } from '@/constants/app-theme'
+import { useAuth } from '@/context/AuthContext'
 import { deletePost, getAllPosts, Post, searchPosts } from '@/services/api'
+import { useFocusEffect } from '@react-navigation/native'
 import { useRouter } from 'expo-router'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -27,6 +28,9 @@ export default function HomeScreen() {
   const [query, setQuery] = useState('')
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const queryRef = useRef(query)
+  queryRef.current = query
+  const isFirstFocusRef = useRef(true)
 
   const fetchPosts = useCallback(async (q: string) => {
     setError('')
@@ -46,10 +50,18 @@ export default function HomeScreen() {
     }
   }, [])
 
-  useEffect(() => {
-    setLoading(true)
-    fetchPosts('')
+  const handleFocus = useCallback(() => {
+    const q = queryRef.current
+    if (isFirstFocusRef.current) {
+      isFirstFocusRef.current = false
+      setLoading(true)
+    } else {
+      setRefreshing(true)
+    }
+    fetchPosts(q)
   }, [fetchPosts])
+
+  useFocusEffect(handleFocus)
 
   const handleSearchChange = (text: string) => {
     setQuery(text)

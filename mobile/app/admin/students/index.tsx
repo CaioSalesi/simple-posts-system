@@ -1,7 +1,7 @@
 import { C } from '@/constants/app-theme'
 import { deleteStudent, getAllStudents, Student } from '@/services/api'
-import { useRouter } from 'expo-router'
-import { useEffect, useState } from 'react'
+import { useFocusEffect, useRouter } from 'expo-router'
+import { useCallback, useState } from 'react'
 import {
   ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View,
 } from 'react-native'
@@ -16,7 +16,7 @@ export default function StudentsListScreen() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState('')
 
-  const fetchPage = async (p: number, append = false) => {
+  const fetchPage = useCallback(async (p: number, append = false) => {
     try {
       const res = await getAllStudents(p)
       setTotal(res.total)
@@ -27,9 +27,13 @@ export default function StudentsListScreen() {
       setLoading(false)
       setLoadingMore(false)
     }
-  }
+  }, [])
 
-  useEffect(() => { fetchPage(1) }, [])
+  const handleFocus = useCallback(() => {
+    fetchPage(1)
+  }, [fetchPage])
+
+  useFocusEffect(handleFocus)
 
   const handleLoadMore = () => {
     if (loadingMore || students.length >= total) return
