@@ -1,4 +1,5 @@
 import { C } from '@/constants/app-theme'
+import { Ionicons } from '@expo/vector-icons'
 import { getTeacherById, updateTeacher } from '@/services/api'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
@@ -14,6 +15,7 @@ export default function EditTeacherScreen() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -95,15 +97,20 @@ export default function EditTeacherScreen() {
 
           <View style={styles.field}>
             <Text style={styles.label}>Nova Senha <Text style={styles.optional}>(opcional)</Text></Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Deixe em branco para não alterar"
-              placeholderTextColor={C.textMuted}
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              autoCapitalize="none"
-            />
+            <View style={styles.inputRow}>
+              <TextInput
+                style={[styles.input, { flex: 1 }]}
+                placeholder="Deixe em branco para não alterar"
+                placeholderTextColor={C.textMuted}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+              />
+              <Pressable onPress={() => setShowPassword(v => !v)} style={styles.eyeBtn}>
+                <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color={C.textMuted} />
+              </Pressable>
+            </View>
           </View>
 
           <View style={styles.actions}>
@@ -131,6 +138,8 @@ const styles = StyleSheet.create({
   field: { gap: 6 },
   label: { fontSize: 13, fontWeight: '600', color: C.textSecondary },
   optional: { fontSize: 11, color: C.textMuted, fontWeight: '400' },
+  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  eyeBtn: { padding: 10 },
   input: { backgroundColor: C.bgCard, borderWidth: 1, borderColor: C.border, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, color: C.textPrimary },
   inputError: { borderColor: C.danger },
   fieldError: { fontSize: 12, color: C.danger },

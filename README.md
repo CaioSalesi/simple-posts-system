@@ -328,56 +328,104 @@ Aponte a câmera do celular para o QR Code exibido no terminal e o app abrirá n
 ```
 mobile/
 ├── app/
-│   ├── _layout.tsx          # Layout raiz com AuthProvider e navegação
-│   ├── login.tsx            # Tela de login e seleção de perfil
+│   ├── _layout.tsx                   # Layout raiz com AuthProvider e navegação
+│   ├── login.tsx                     # Tela de login e seleção de perfil
 │   ├── (tabs)/
-│   │   ├── _layout.tsx      # Navegação por abas
-│   │   ├── index.tsx        # Lista de posts com busca
-│   │   └── explore.tsx      # Painel administrativo (professores)
+│   │   ├── _layout.tsx               # Navegação por abas (com botão Sair)
+│   │   ├── index.tsx                 # Lista de posts com busca
+│   │   └── explore.tsx               # Painel administrativo (só professores)
 │   ├── post/
-│   │   └── [id].tsx         # Leitura completa do post
+│   │   └── [id].tsx                  # Leitura completa do post
 │   └── admin/
-│       ├── new.tsx          # Criação de post
-│       └── [id]/
-│           └── edit.tsx     # Edição de post
+│       ├── new.tsx                   # Criar post
+│       ├── posts.tsx                 # Listar posts (admin)
+│       ├── [id]/
+│       │   └── edit.tsx              # Editar post
+│       ├── teachers/
+│       │   ├── index.tsx             # Listar professores (paginado)
+│       │   ├── new.tsx               # Criar professor
+│       │   └── [id]/
+│       │       └── edit.tsx          # Editar professor
+│       └── students/
+│           ├── index.tsx             # Listar alunos (paginado)
+│           ├── new.tsx               # Criar aluno
+│           └── [id]/
+│               └── edit.tsx          # Editar aluno
 ├── context/
-│   └── AuthContext.tsx      # Estado global de autenticação
+│   └── AuthContext.tsx               # Estado global de autenticação (JWT)
 ├── services/
-│   └── api.ts               # Cliente HTTP (fetch) para a API REST
+│   └── api.ts                        # Cliente HTTP (fetch) para a API REST
 └── constants/
-    └── app-theme.ts         # Tokens de cor do ClassHub
+    └── app-theme.ts                  # Tokens de cor do ClassHub
 ```
+
+### Rotas
+
+| Rota | Acesso | Descrição |
+|------|--------|-----------|
+| `/login` | Público | Seleção de perfil e formulário de login |
+| `/(tabs)` → `index` | Todos | Lista de posts com busca |
+| `/(tabs)` → `explore` | Somente professores | Painel administrativo |
+| `/post/[id]` | Todos | Conteúdo completo do post |
+| `/admin/new` | Somente professores | Criar post |
+| `/admin/[id]/edit` | Somente professores | Editar post |
+| `/admin/posts` | Somente professores | Listar todos os posts (admin) |
+| `/admin/teachers` | Somente professores | Listar professores (paginado) |
+| `/admin/teachers/new` | Somente professores | Criar professor |
+| `/admin/teachers/[id]/edit` | Somente professores | Editar professor |
+| `/admin/students` | Somente professores | Listar alunos (paginado) |
+| `/admin/students/new` | Somente professores | Criar aluno |
+| `/admin/students/[id]/edit` | Somente professores | Editar aluno |
 
 ### Telas
 
 | Tela | Acesso | Descrição |
 |------|--------|-----------|
-| Login | Público | Seleção de perfil (Aluno/Professor) e formulário de acesso |
+| Login | Público | Seleciona perfil (Aluno/Professor), autentica via JWT |
 | Posts (aba) | Todos | Lista de posts com busca por palavra-chave e pull-to-refresh |
-| Detalhe do post | Todos | Conteúdo completo, data, autor |
-| Admin (aba) | Professor | Tabela de posts com ações de editar e excluir |
-| Criar post | Professor | Formulário com título, autor e conteúdo |
-| Editar post | Professor | Formulário pré-preenchido com dados do post |
+| Detalhe do post | Todos | Conteúdo completo, autor, data de criação e edição |
+| Admin (aba) | Somente professores | Menu com acesso rápido a posts, professores e alunos |
+| Listar posts (admin) | Somente professores | Tabela de posts com botões editar e excluir |
+| Criar post | Somente professores | Formulário com título, autor e conteúdo |
+| Editar post | Somente professores | Formulário pré-preenchido com dados do post |
+| Listar professores | Somente professores | Lista paginada com botões editar e excluir |
+| Criar professor | Somente professores | Formulário com nome, e-mail e senha |
+| Editar professor | Somente professores | Formulário pré-preenchido (senha opcional) |
+| Listar alunos | Somente professores | Lista paginada com botões editar e excluir |
+| Criar aluno | Somente professores | Formulário com nome, e-mail e senha |
+| Editar aluno | Somente professores | Formulário pré-preenchido (senha opcional) |
 
 ### Autenticação
 
-O app opera em **modo demonstração** — qualquer nome e senha não-vazios são aceitos. O perfil escolhido define o nível de acesso:
+O app utiliza **autenticação JWT real** integrada ao backend. O fluxo é:
 
-- **Aluno** — visualiza e busca posts.
-- **Professor** — acesso completo: criar, editar, excluir e acessar o painel admin.
+1. Usuário seleciona o perfil (**Aluno** ou **Professor**) e informa e-mail e senha.
+2. O app envia as credenciais para `POST /auth/login` com o campo `role`.
+3. O backend valida as credenciais no banco PostgreSQL e retorna um token JWT.
+4. O token é armazenado em memória e enviado no header `Authorization: Bearer <token>` em todas as requisições subsequentes.
+5. O perfil (`role`) determina o nível de acesso:
+   - **Aluno** — visualiza e busca posts. A aba Admin é ocultada.
+   - **Professor** — acesso completo: criar, editar, excluir posts, professores e alunos.
 
 > A sessão é mantida em memória e encerrada ao fechar o app.
 
+Para criar o primeiro usuário professor, execute o seed após subir o backend:
+
+```bash
+docker-compose exec app node seed-admin.js
+# Cria: admin@email.com / Pass@123 (Professor)
+```
+
 ### Guia de uso
 
-1. **Abra o Expo Go** e escaneie o QR Code do terminal.
+1. **Abra o Expo Go** e escaneie o QR Code do terminal (ou pressione `a` para abrir no emulador Android).
 2. **Escolha o perfil** (Aluno ou Professor) na tela de login.
-3. **Entre com qualquer nome e senha** — o modo demonstração aceita qualquer valor.
-4. **Aba Posts** — veja todos os posts, use a barra de busca para filtrar. Professores têm botões de editar/excluir em cada card e um botão flutuante para criar novo post.
-5. **Toque em um card** para ler o post completo.
-6. **Aba Admin** (Professor) — visão em lista de todos os posts com ações rápidas.
-7. **Criar post** — toque em "+ Novo Post" e preencha título, autor e conteúdo.
-8. **Sair** — toque em "Sair" no canto superior direito da aba Posts.
+3. **Informe e-mail e senha** cadastrados no sistema.
+4. **Aba Posts** — visualize todos os posts e use a busca para filtrar por palavra-chave.
+5. **Toque em um card** para ler o conteúdo completo do post.
+6. **Professores** têm botões de editar/excluir nos cards e um botão flutuante para criar novos posts.
+7. **Aba Admin** (Professor) — acesse o painel para gerenciar posts, professores e alunos.
+8. **Sair** — toque em "Sair" no canto superior direito (disponível em todas as abas).
 
 ---
 

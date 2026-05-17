@@ -145,9 +145,6 @@ export default function HomeScreen() {
             Olá, {user?.name} · {user?.role === 'teacher' ? 'Professor' : 'Aluno'}
           </Text>
         </View>
-        <Pressable onPress={logout} style={styles.logoutBtn}>
-          <Text style={styles.logoutText}>Sair</Text>
-        </Pressable>
       </View>
 
       {/* Search */}

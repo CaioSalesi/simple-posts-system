@@ -1,0 +1,37 @@
+name: Mobile CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'mobile/**'
+  pull_request:
+    paths:
+      - 'mobile/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./mobile
+        run: npm install
+
+      - name: Type check
+        working-directory: ./mobile
+        run: npx tsc --noEmit
+
+      - name: Lint
+        working-directory: ./mobile
+        run: npx expo lint

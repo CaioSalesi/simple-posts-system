@@ -1,5 +1,6 @@
 import { useAuth } from '@/context/AuthContext'
 import { C } from '@/constants/app-theme'
+import { Ionicons } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useState } from 'react'
 import {
@@ -40,6 +41,7 @@ export default function LoginScreen() {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -134,14 +136,20 @@ export default function LoginScreen() {
 
             <View style={styles.field}>
               <Text style={styles.label}>Senha</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="••••••••"
-                placeholderTextColor={C.textMuted}
-                value={password}
-                onChangeText={t => { setPassword(t); setError('') }}
-                secureTextEntry
-              />
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={[styles.input, { flex: 1 }]}
+                  placeholder="••••••••"
+                  placeholderTextColor={C.textMuted}
+                  value={password}
+                  onChangeText={t => { setPassword(t); setError('') }}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                />
+                <Pressable onPress={() => setShowPassword(v => !v)} style={styles.eyeBtn}>
+                  <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color={C.textMuted} />
+                </Pressable>
+              </View>
             </View>
 
             {!!error && (
@@ -173,6 +181,8 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: C.bg },
   scroll: { flexGrow: 1, padding: 24, paddingTop: 64, gap: 20 },
+  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  eyeBtn: { padding: 10 },
   logoArea: { alignItems: 'center', marginBottom: 8 },
   logoEmoji: { fontSize: 48, marginBottom: 8 },
   appName: { fontSize: 28, fontWeight: '800', color: C.primaryLight, marginBottom: 4 },

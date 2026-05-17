@@ -3,9 +3,10 @@ import { HapticTab } from '@/components/haptic-tab'
 import { IconSymbol } from '@/components/ui/icon-symbol'
 import { C } from '@/constants/app-theme'
 import { Redirect, Tabs } from 'expo-router'
+import { Pressable, Text } from 'react-native'
 
 export default function TabLayout() {
-  const { user, isTeacher } = useAuth()
+  const { user, isTeacher, logout } = useAuth()
 
   if (!user) return <Redirect href="/login" />
 
@@ -21,6 +22,16 @@ export default function TabLayout() {
         headerStyle: { backgroundColor: C.bgCard },
         headerTintColor: C.textPrimary,
         tabBarButton: HapticTab,
+        headerRight: () => (
+          <Pressable
+            onPress={logout}
+            style={{ paddingHorizontal: 16, paddingVertical: 8 }}
+          >
+            <Text style={{ fontSize: 13, color: C.textMuted, fontWeight: '500' }}>
+              Sair
+            </Text>
+          </Pressable>
+        ),
       }}
     >
       <Tabs.Screen
@@ -35,10 +46,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="explore"
         options={{
-          title: isTeacher ? 'Admin' : 'Painel',
+          title: 'Admin',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={26} name="gear.fill" color={color} />
           ),
+          href: isTeacher ? '/explore' : null,
         }}
       />
     </Tabs>

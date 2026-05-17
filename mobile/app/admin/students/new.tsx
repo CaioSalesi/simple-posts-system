@@ -1,4 +1,5 @@
 import { C } from '@/constants/app-theme'
+import { Ionicons } from '@expo/vector-icons'
 import { createStudent } from '@/services/api'
 import { useRouter } from 'expo-router'
 import { useState } from 'react'
@@ -13,6 +14,7 @@ export default function NewStudentScreen() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -53,21 +55,28 @@ export default function NewStudentScreen() {
               <Text style={styles.label}>
                 {field === 'name' ? 'Nome' : field === 'email' ? 'E-mail' : 'Senha'}
               </Text>
-              <TextInput
-                style={[styles.input, !!errors[field] && styles.inputError]}
-                placeholder={field === 'name' ? 'Nome completo' : field === 'email' ? 'email@exemplo.com' : '••••••••'}
-                placeholderTextColor={C.textMuted}
-                value={field === 'name' ? name : field === 'email' ? email : password}
-                onChangeText={t => {
-                  if (field === 'name') setName(t)
-                  else if (field === 'email') setEmail(t)
-                  else setPassword(t)
-                  setErrors(e => ({ ...e, [field]: '' }))
-                }}
-                keyboardType={field === 'email' ? 'email-address' : 'default'}
-                autoCapitalize={field === 'email' || field === 'password' ? 'none' : 'words'}
-                secureTextEntry={field === 'password'}
-              />
+              <View style={field === 'password' ? styles.inputRow : undefined}>
+                <TextInput
+                  style={[styles.input, !!errors[field] && styles.inputError, field === 'password' && { flex: 1 }]}
+                  placeholder={field === 'name' ? 'Nome completo' : field === 'email' ? 'email@exemplo.com' : '••••••••'}
+                  placeholderTextColor={C.textMuted}
+                  value={field === 'name' ? name : field === 'email' ? email : password}
+                  onChangeText={t => {
+                    if (field === 'name') setName(t)
+                    else if (field === 'email') setEmail(t)
+                    else setPassword(t)
+                    setErrors(e => ({ ...e, [field]: '' }))
+                  }}
+                  keyboardType={field === 'email' ? 'email-address' : 'default'}
+                  autoCapitalize={field === 'email' || field === 'password' ? 'none' : 'words'}
+                  secureTextEntry={field === 'password' && !showPassword}
+                />
+                {field === 'password' && (
+                  <Pressable onPress={() => setShowPassword(v => !v)} style={styles.eyeBtn}>
+                    <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color={C.textMuted} />
+                  </Pressable>
+                )}
+              </View>
               {!!errors[field] && <Text style={styles.fieldError}>{errors[field]}</Text>}
             </View>
           ))}
@@ -96,6 +105,8 @@ const styles = StyleSheet.create({
   heading: { fontSize: 22, fontWeight: '800', color: C.textPrimary },
   field: { gap: 6 },
   label: { fontSize: 13, fontWeight: '600', color: C.textSecondary },
+  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  eyeBtn: { padding: 10 },
   input: { backgroundColor: C.bgCard, borderWidth: 1, borderColor: C.border, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, fontSize: 15, color: C.textPrimary },
   inputError: { borderColor: C.danger },
   fieldError: { fontSize: 12, color: C.danger },

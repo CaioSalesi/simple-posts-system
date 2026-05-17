@@ -3,6 +3,13 @@ name: CI/CD Node Backend
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'frontend/**'
+      - 'mobile/**'
+  pull_request:
+    paths-ignore:
+      - 'frontend/**'
+      - 'mobile/**'
 
 jobs:
   build:
